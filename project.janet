@@ -4,7 +4,7 @@
     :description ``` ```
     :version "0.0.0"
     :executable true
-    :dependencies ["https://github.com/janet-lang/jaylib"])
+    :dependencies [{:url "https://github.com/s-lambert/jaylib.git" :tag "raygui-implementation"}])
 
   (declare-source
     :prefix "janet-game"
