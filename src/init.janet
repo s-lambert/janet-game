@@ -9,6 +9,8 @@
 (var player-y 0.0)
 (def player-speed 100)
 
+(var camera (camera-2d :offset [250 250] :target [0 0] :rotation 0 :zoom 1.0))
+
 (while (not (window-should-close))
   (def delta (get-frame-time))
   (if (key-down? :down)
@@ -20,7 +22,12 @@
   (if (key-down? :left)
     (set player-x (+ player-x (- (* delta player-speed)))))
 
+  (if (key-down? :space)
+    (set (camera :offset) [10 10]))
+
   (draw
    (clear-background :white)
-   (draw-circle (math/round (+ player-x 250)) (math/round (+ player-y 250)) 10 :black)))
+   (begin-mode-2d camera)
+   (draw-circle (math/round player-x) (math/round player-y) 10 :black)
+   (end-mode-2d)))
 (close-window)
