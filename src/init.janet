@@ -1,31 +1,26 @@
-(import jaylib :as jl)
+(use jaylib)
 (use ./helpers)
 
-(jl/init-window 500 500 "Test Game")
-(jl/set-target-fps 60)
-(jl/hide-cursor)
+(init-window 500 500 "Test Game")
+(set-target-fps 60)
+(hide-cursor)
 
-(while (not (jl/window-should-close))
+(var player-x 0.0)
+(var player-y 0.0)
+(def player-speed 100)
+
+(while (not (window-should-close))
+  (def delta (get-frame-time))
+  (if (key-down? :down)
+    (set player-y (+ player-y (* delta player-speed))))
+  (if (key-down? :up)
+    (set player-y (+ player-y (- (* delta player-speed)))))
+  (if (key-down? :right)
+    (set player-x (+ player-x (* delta player-speed))))
+  (if (key-down? :left)
+    (set player-x (+ player-x (- (* delta player-speed)))))
+
   (draw
-   (jl/clear-background [0 0 0])
-
-   (let [[x y] (jl/get-mouse-position)]
-     (jl/draw-circle-gradient (math/floor x) (math/floor y) 31.4 :lime :red)
-     (jl/draw-poly [500 200] 5 40 0 :magenta)
-     (jl/draw-line-bezier
-      [(- x 100) y]
-      [(+ x 100) (+ y 50)]
-      4 :pink)
-     (jl/draw-line-ex
-      [x (- y 10)]
-      [x (+ y 10)]
-      4 :sky-blue)
-     (jl/draw-line-strip
-      [[x 0] [x 100] [50 y] [10 180]]
-      :ray-white))
-
-   (jl/gui-status-bar [0 475 500 25] "STATUS")
-
-   (jl/gui-label [0 0 75 25] "LABEL")))
-
-(jl/close-window)
+   (clear-background :white)
+   (draw-circle (math/round (+ player-x 250)) (math/round (+ player-y 250)) 10 :black)))
+(close-window)
