@@ -27,3 +27,21 @@
   (for i 0 rows
        (array/push defs ~(def ,(symbol (string row-prefix (+ i 1))) ,(* 25 i))))
   ~(upscope ,;defs))
+
+# Replaces a symbol with a value in an array
+(defmacro replace-5 [arr]
+  (def new-array @[])
+  (each item arr (if (= item 5) (array/push new-array 4) (array/push item)))
+  ~,new-array)
+
+# Replaces a symbol with a value in a matrix
+(defmacro replace-symbol [matrix symbol value]
+  (def new-matrix @[])
+  (each row matrix
+    (def new-row @[])
+    (each column row
+      (if (= column symbol)
+        (array/push new-row value)
+        (array/push new-row column)))
+    (array/push new-matrix new-row))
+  ~,new-matrix)

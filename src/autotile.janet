@@ -10,37 +10,6 @@
 # Is a corner tile that's filled with 1 to the east, 1 south and 1 south east
 # There are 47 combinations needed to auto tile so at least 2^6 bits
 
-
-
-(defmacro replace-5 [arr]
-  (def new-array @[])
-  (each item arr (if (= item 5) (array/push new-array 4) (array/push item)))
-  ~,new-array)
-
-(defmacro replace-symbol [matrix symbol value]
-  (def new-matrix @[])
-  (each row matrix
-    (def new-row @[])
-    (each column row
-      (if (= column symbol)
-        (array/push new-row value)
-        (array/push new-row column)))
-    (array/push new-matrix new-row))
-  ~,new-matrix)
-
-(defn replace-xyz-fn [matrix x-val y-val z-val]
-  (def new-matrix @[])
-  (each row matrix
-    (def new-row @[])
-    (each column row
-      (array/push new-row (cond
-                            (= column :x) x-val
-                            (= column :y) y-val
-                            (= column :z) z-val
-                            column)))
-    (array/push new-matrix new-row))
-  new-matrix)
-
 (defn replace-wxyz [matrix w-val x-val y-val z-val]
   (def new-matrix @[])
   (each row matrix
@@ -62,7 +31,7 @@
       (loop [z :range [0 2]]
         (array/push
          duplicates
-         (replace-xyz-fn matrix x y z)))))
+         (replace-wxyz matrix 0 x y z)))))
   ~[:has-duplicates ,;duplicates])
 
 (defmacro resolve-4-duplicates [matrix]
