@@ -6,13 +6,17 @@
 (defmacro in-room-pos [x y]
   [(+ x (bounds 0)) (+ y (bounds 1))])
 
+(var tilemap nil)
+(var tilemap-t nil)
+
+(defn load-tilemap []
+  (set tilemap (load-image-1 "assets/autotile-example.png"))
+  (set tilemap-t (load-texture-from-image tilemap)))
+
 (defn tilemap-drawer []
-  (def tilemap (load-image-1 "assets/autotile-example.png"))
-  (def tilemap-t (load-texture-from-image tilemap))
-  
   (fn draw-room [tile-setup]
-    (each tile tile-setup
-      (if (not (nil? tile))
-        (do
-          (var [position source] tile)
-          (draw-texture-rec tilemap-t source position :white))))))
+    (if (not (nil? tilemap-t))
+      (each tile tile-setup
+        (if (not (nil? tile))
+          (let [[position source] tile]
+            (draw-texture-rec tilemap-t source position :white)))))))

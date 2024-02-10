@@ -12,8 +12,7 @@
 (for row-index 0 25
      (array/push tilemap-bits (array/new-filled 25 0)))
 
-(print ;(tilemap-bits 0))
-
+(load-tilemap)
 (def draw-room (tilemap-drawer))
 
 (while (not (window-should-close))

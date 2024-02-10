@@ -430,9 +430,7 @@
           (var tile-pos [(* column-index 20) (* row-index 20) tile-w tile-h])
           (var tile-mask (array-to-bits tile-neighbours))
           (if (nil? (tile-lookup tile-mask))
-            (do
-              (print ;tile-neighbours)
-              (error "Could not match neighbours"))
+            (error (string "Could not match neighbours" tile-neighbours))
             (array/push
              tiles
              [[(* 20 column-index) (* 20 row-index)]

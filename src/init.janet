@@ -8,6 +8,7 @@
 (set-target-fps 60)
 (hide-cursor)
 
+
 (def player-pos @[250.0 250.0])
 (def player-speed 200)
 
@@ -60,6 +61,7 @@
 
 (def nine-patch (load-image-1 "assets/nine-patch-attempt.png"))
 (def nine-patch-t (load-texture-from-image nine-patch))
+(load-tilemap)
 
 (def draw-room (tilemap-drawer))
 
@@ -102,7 +104,6 @@
    (in-2d
     camera
     (draw-room example-room-tiles)
-    (gui-grid [0 0 500 500] "GRID" 20 1 @[-1 -1])
     # (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
     (draw-circle (math/round (player-pos 0)) (math/round (player-pos 1)) 10 :black))
 
