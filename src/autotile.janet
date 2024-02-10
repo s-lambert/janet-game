@@ -41,6 +41,20 @@
     (array/push new-matrix new-row))
   new-matrix)
 
+(defn replace-wxyz [matrix w-val x-val y-val z-val]
+  (def new-matrix @[])
+  (each row matrix
+    (def new-row @[])
+    (each column row
+      (array/push new-row (cond
+                            (= column :w) w-val
+                            (= column :x) x-val
+                            (= column :y) y-val
+                            (= column :z) z-val
+                            column)))
+    (array/push new-matrix new-row))
+  new-matrix)
+
 (defmacro resolve-3-duplicates [matrix]
   (def duplicates @[])
   (loop [x :range [0 2]]
@@ -49,6 +63,17 @@
         (array/push
          duplicates
          (replace-xyz-fn matrix x y z)))))
+  ~[:has-duplicates ,;duplicates])
+
+(defmacro resolve-4-duplicates [matrix]
+  (def duplicates @[])
+  (loop [w :range [0 2]]
+    (loop [x :range [0 2]]
+      (loop [y :range [0 2]]
+        (loop [z :range [0 2]]
+          (array/push
+           duplicates
+           (replace-wxyz matrix w x y z))))))
   ~[:has-duplicates ,;duplicates])
 
 # Refer to autotile-setup.png to see what maps to what, tiles are 20x20 with 5px
@@ -77,9 +102,10 @@
     [1 1 :z]]))
 
 (def r1c4
-  [[0 0 0]
-   [0 1 0]
-   [0 1 0]])
+  (resolve-4-duplicates
+   [[:w 0 :x]
+    [0 1 0]
+    [:y 1 :z]]))
 
 (def r1c5
   [[0 0 0]
@@ -179,9 +205,10 @@
     [:z 0 :y]]))
 
 (def r3c4
-  [[0 1 0]
-   [0 1 0]
-   [0 0 0]])
+  (resolve-4-duplicates
+   [[:w 1 :x]
+    [0 1 0]
+    [:y 0 :z]]))
 
 (def r3c5
   [[0 1 0]
@@ -219,11 +246,11 @@
    [1 1 0]])
 
 (def r4c1
-  [:has-duplicates
+  (resolve-4-duplicates
    # No extra corners
-   [[0 0 0]
+   [[:w 0 :x]
     [0 1 1]
-    [0 0 0]]])
+    [:y 0 :z]]))
 
 (def r4c2
   [[0 0 0]
@@ -231,9 +258,10 @@
    [0 0 0]])
 
 (def r4c3
-  [[0 0 0]
-   [1 1 0]
-   [0 0 0]])
+  (resolve-4-duplicates
+   [[:w 0 :x]
+    [1 1 0]
+    [:y 0 :z]]))
 
 (def r4c4
   [[0 0 0]
