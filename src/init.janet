@@ -113,7 +113,7 @@
    (in-2d
     camera
     (draw-room)
-    (gui-grid [0 0 500 500] "GRID" 25 1 @[-1 -1])
+    (gui-grid [0 0 500 500] "GRID" 20 1 @[-1 -1])
     # (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
     (draw-circle (math/round (player-pos 0)) (math/round (player-pos 1)) 10 :black))
 
