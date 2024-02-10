@@ -1,5 +1,6 @@
 (use jaylib)
 (use ./helpers)
+(use ./room)
 
 (init-window 500 500 "Test Game")
 (set-target-fps 60)
@@ -71,6 +72,8 @@
 (def nine-patch (load-image-1 "assets/nine-patch-attempt.png"))
 (def nine-patch-t (load-texture-from-image nine-patch))
 
+(def draw-room (tilemap-drawer))
+
 (while (not (window-should-close))
   (def delta (get-frame-time))
   (if (nil? animation)
@@ -109,8 +112,9 @@
    (clear-background :white)
    (in-2d
     camera
+    (draw-room)
     (gui-grid [0 0 500 500] "GRID" 25 1 @[-1 -1])
-    (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
+    # (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
     (draw-circle (math/round (player-pos 0)) (math/round (player-pos 1)) 10 :black))
 
    (draw-text (string "ROOM " current-room) 0 0 10 :black)))
