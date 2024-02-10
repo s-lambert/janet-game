@@ -1,5 +1,6 @@
 (use jaylib)
 (use ./helpers)
+(use ./math)
 (use ./room)
 
 (init-window 500 500 "Test Game")
@@ -9,21 +10,11 @@
 (def player-pos @[250.0 250.0])
 (def player-speed 200)
 
-(var has-transitioned false)
-(var is-transition false)
-
 (var camera (camera-2d :offset @[0 0] :target @[0 0] :rotation 0 :zoom 1.0))
 
 (def room-a [0 0])
 (def room-b [-500 0])
 (def room-c [-500 -500])
-
-(defn lerp [from to t]
-  (if (= t 0.0)
-    from
-    (if (= t 1.0)
-      to
-      (+ from (* t (- to from))))))
 
 (defn leave-room-a? [position]
   (<= (position 0) 10))
@@ -32,9 +23,6 @@
   (<= (position 1) 10))
 
 (defn leave-room-c? [& args] (do))
-
-(defn lerp-pos [from to progress]
-  [(lerp (from 0) (to 0) progress) (lerp (from 1) (to 1) progress)])
 
 (defn animation-fn [from to seconds lerp-val set-target]
   (var elapsed 0.0)
