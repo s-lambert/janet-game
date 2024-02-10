@@ -9,7 +9,7 @@
 (var grid-pos @[-1 -1])
 
 (var tilemap-bits @[])
-(for row-index 0 25 
+(for row-index 0 25
      (array/push tilemap-bits (array/new-filled 25 0)))
 
 (print ;(tilemap-bits 0))
@@ -18,7 +18,7 @@
 
 (while (not (window-should-close))
   (draw
-   (clear-background :white) 
+   (clear-background :white)
    (draw-room (autotile tilemap-bits))
    (gui-grid [0 0 500 500] "GRID" 20 1 grid-pos)
    (if (and (mouse-button-down? :left)
@@ -26,5 +26,12 @@
      (let
       [[x y] grid-pos]
        (var row (tilemap-bits y))
-       (set (row x) 1)))))
+       (set (row x) 1)))
+   (if (and (mouse-button-down? :right)
+            (not (deep= grid-pos @[-1 -1])))
+     (let
+      [[x y] grid-pos]
+       (var row (tilemap-bits y))
+       (set (row x) 0)))))))
+
 (close-window)
