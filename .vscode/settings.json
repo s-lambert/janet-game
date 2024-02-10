@@ -1,0 +1,5 @@
+{
+  "[janet]": {
+    "editor.matchBrackets": "always"
+  }
+}
