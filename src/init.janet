@@ -60,7 +60,7 @@
   (set (player-pos 1) (new-pos 1)))
 
 (defn update-camera-target [new-target]
-  (set (camera :target) [(new-target 0) (new-target 1)]))
+  (set (camera :target) @[;new-target]))
 
 (defn move-player-into-room [current-pos room-pos]
   (animation-fn current-pos room-pos 0.5 lerp-pos update-player-pos))
@@ -107,13 +107,12 @@
 
   (draw
    (clear-background :white)
-   (begin-mode-2d camera)
-   (gui-grid [0 0 500 500] "GRID" 25 1 @[-1 -1])
-   (draw-text "ROOM A" 0 0 10 :black)
-   (draw-text "ROOM B" -500 0 10 :black)
-   (draw-text "ROOM C" -500 -500 10 :black)
-   (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
+   (in-2d
+    camera
+    (gui-grid [0 0 500 500] "GRID" 25 1 @[-1 -1])
+    (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
 
-   (draw-circle (math/round (player-pos 0)) (math/round (player-pos 1)) 10 :black)
-   (end-mode-2d)))
+    (draw-circle (math/round (player-pos 0)) (math/round (player-pos 1)) 10 :black))
+
+   (draw-text (string "ROOM " current-room) 0 0 10 :black)))
 (close-window)

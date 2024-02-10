@@ -6,6 +6,12 @@
      ,;forms
      (,end-drawing)))
 
+(defmacro in-2d [camera & forms]
+  ~(do
+     (,begin-mode-2d camera)
+     ,;forms
+     (,end-mode-2d)))
+
 # Example usage:
 # 
 # (define-grid 5 5)
