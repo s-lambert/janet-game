@@ -15,8 +15,9 @@
 
 (defn tilemap-drawer []
   (fn draw-room [tile-setup]
-    (if (not (nil? tilemap-t))
-      (each tile tile-setup
-        (if (not (nil? tile))
-          (let [[position source] tile]
-            (draw-texture-rec tilemap-t source position :white)))))))
+    (if (nil? tilemap-t)
+      (break))
+    (each tile tile-setup
+      (if (nil? tile) (break))
+      (let [[position source] tile]
+        (draw-texture-rec tilemap-t source position :white)))))
