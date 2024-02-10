@@ -13,10 +13,40 @@
 # Refer to autotile-setup.png to see what maps to what, tiles are 20x20 with 5px
 # borders. The middle bit is whether the tile is filed, the other bits are the 
 # neighbours.
+
+# r1c1 r3c1 r1c3 r3c3 are corners and don't care about the diagonals besides the inner one
+# r4c1 r4c3 r1c4 r3c4 are ends and don't care about any diagonals
+# r4c2 r2c4 don't care about one side being covered
 (def r1c1
-  [[0 0 0]
-   [0 1 1]
-   [0 1 1]])
+  [:has-duplicates
+   # No extra corners
+   [[0 0 0]
+    [0 1 1]
+    [0 1 1]]
+   # 1 extra corner
+   [[1 0 0]
+    [0 1 1]
+    [0 1 1]]
+   [[0 0 1]
+    [0 1 1]
+    [0 1 1]]
+   [[0 0 0]
+    [0 1 1]
+    [1 1 1]]
+   # 2 extra corners
+   [[1 0 0]
+    [0 1 1]
+    [1 1 1]]
+   [[1 0 1]
+    [0 1 1]
+    [0 1 1]]
+   [[0 0 1]
+    [0 1 1]
+    [1 1 1]]
+   # 3 extra corners
+   [[1 0 1]
+    [0 1 1]
+    [1 1 1]]])
 
 (def r1c2
   [[0 0 0]
@@ -24,9 +54,36 @@
    [1 1 1]])
 
 (def r1c3
-  [[0 0 0]
+  [:has-duplicates
+   # No extra corners
+   [[0 0 0]
    [1 1 0]
-   [1 1 0]])
+   [1 1 0]]
+   # 1 extra corner
+   [[0 0 0]
+    [1 1 0]
+    [1 1 1]]
+   [[0 0 1]
+    [1 1 0]
+    [1 1 0]]
+   [[1 0 0]
+    [1 1 0]
+    [1 1 0]]
+   # 2 extra corners
+   [[1 0 1]
+    [1 1 0]
+    [1 1 0]]
+   [[1 0 0]
+    [1 1 0]
+    [1 1 1]]
+   [[0 0 1]
+    [1 1 0]
+    [1 1 1]]
+   # 3 extra corners
+   [[1 0 1]
+    [1 1 0]
+    [1 1 1]]
+   ])
 
 (def r1c4
   [[0 0 0]
@@ -114,9 +171,35 @@
    [1 1 0]])
 
 (def r3c1
-  [[0 1 1]
-   [0 1 1]
-   [0 0 0]])
+  [:has-duplicates
+   # No extra corners
+   [[0 1 1]
+    [0 1 1]
+    [0 0 0]]
+   # 1 extra corner
+   [[1 1 1]
+    [0 1 1]
+    [0 0 0]]
+   [[0 1 1]
+    [0 1 1]
+    [1 0 0]]
+   [[0 1 1]
+    [0 1 1]
+    [0 0 1]]
+   # 2 extra corners
+   [[0 1 1]
+    [0 1 1]
+    [1 0 1]]
+   [[1 1 1]
+    [0 1 1]
+    [0 0 1]]
+   [[1 1 1]
+    [0 1 1]
+    [1 0 0]]
+   # 3 extra corners
+   [[1 1 1]
+    [0 1 1]
+    [1 0 1]]])
 
 (def r3c2
   [[1 1 1]
@@ -124,9 +207,35 @@
    [0 0 0]])
 
 (def r3c3
-  [[1 1 0]
-   [1 1 0]
-   [0 0 0]])
+  [:has-duplicates
+   # No extra corners
+   [[1 1 0]
+    [1 1 0]
+    [0 0 0]]
+   # 1 extra corner
+   [[1 1 1]
+    [1 1 0]
+    [0 0 0]]
+   [[1 1 0]
+    [1 1 0]
+    [0 0 1]]
+   [[1 1 0]
+    [1 1 0]
+    [1 0 0]]
+   # 2 extra corners
+   [[1 1 1]
+    [1 1 0]
+    [1 0 0]]
+   [[1 1 1]
+    [1 1 0]
+    [0 0 1]]
+   [[1 1 0]
+    [1 1 0]
+    [1 0 1]]
+   # 3 extra corners
+   [[1 1 1]
+    [1 1 0]
+    [1 0 1]]])
 
 (def r3c4
   [[0 1 0]
@@ -265,6 +374,21 @@
 (def tile-w 20)
 (def tile-h 20)
 
+
+(defn foo [bits-to-tile row-index column-index cell]
+  (var bits (matrix-to-bits cell))
+  (print bits)
+
+  (if (nil? (bits-to-tile bits))
+    (if (= row-index 4)
+      (put bits-to-tile bits
+           [(* (+ 4 column-index) 20) (* row-index 20) tile-w tile-h])
+      (put bits-to-tile bits
+           [(* column-index 20) (* row-index 20) tile-w tile-h]))
+    (do
+      (print bits)
+      (error "Tile Collision"))))
+
 # Takes the bitmask of tile + neighbours and gives back the texture coords.
 (def tile-lookup
   (do
@@ -272,15 +396,15 @@
     (loop [row-index :keys combinations]
       (var row (combinations row-index))
       (loop [column-index :keys row]
-        (var column (row column-index))
-        (var bits (matrix-to-bits column))
-        (if (nil? (bits-to-tile bits))
-          (if (= row-index 4)
-            (put bits-to-tile bits
-                 [(* (+ 4 column-index) 20) (* row-index 20) tile-w tile-h])
-            (put bits-to-tile bits
-                 [(* column-index 20) (* row-index 20) tile-w tile-h]))
-          (error "Tile Collision"))))
+        (var cell (row column-index))
+        (if (= (cell 0) :has-duplicates)
+          (do
+            (print "multiple mask")
+            (each duplicate (drop 1 cell)
+              (foo bits-to-tile row-index column-index duplicate)))
+          (do 
+            (print "single mask")
+            (foo bits-to-tile row-index column-index cell)))))
     bits-to-tile))
 
 (def example-room
@@ -288,18 +412,18 @@
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
