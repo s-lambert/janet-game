@@ -24,6 +24,23 @@
     (array/push new-matrix new-row))
   new-matrix)
 
+(defmacro resolve-1-duplicate [matrix]
+  (def duplicates @[])
+  (loop [z :range [0 2]]
+    (array/push
+     duplicates
+     (replace-wxyz matrix 0 0 0 z)))
+  ~[:has-duplicates ,;duplicates])
+
+(defmacro resolve-2-duplicates [matrix]
+  (def duplicates @[])
+  (loop [y :range [0 2]]
+    (loop [z :range [0 2]]
+      (array/push
+       duplicates
+       (replace-wxyz matrix 0 0 y z))))
+  ~[:has-duplicates ,;duplicates])
+
 (defmacro resolve-3-duplicates [matrix]
   (def duplicates @[])
   (loop [x :range [0 2]]
@@ -60,9 +77,10 @@
     [:z 1 1]]))
 
 (def r1c2
-  [[0 0 0]
-   [1 1 1]
-   [1 1 1]])
+  (resolve-2-duplicates
+   [[:y 0 :z]
+    [1 1 1]
+    [1 1 1]]))
 
 (def r1c3
   (resolve-3-duplicates
@@ -77,29 +95,34 @@
     [:y 1 :z]]))
 
 (def r1c5
-  [[0 0 0]
-   [0 1 1]
-   [0 1 0]])
+  (resolve-3-duplicates
+   [[:x 0 :y]
+    [0 1 1]
+    [:z 1 0]]))
 
 (def r1c6
-  [[0 0 0]
-   [1 1 1]
-   [1 1 0]])
+  (resolve-2-duplicates
+   [[:y 0 :z]
+    [1 1 1]
+    [1 1 0]]))
 
 (def r1c7
-  [[0 0 0]
-   [1 1 1]
-   [0 1 1]])
+  (resolve-2-duplicates
+   [[:y 0 :z]
+    [1 1 1]
+    [0 1 1]]))
 
 (def r1c8
-  [[0 0 0]
-   [1 1 0]
-   [0 1 0]])
+  (resolve-3-duplicates
+   [[:x 0 :y]
+    [1 1 0]
+    [0 1 :z]]))
 
 (def r1c9
-  [[0 0 0]
-   [1 1 1]
-   [0 1 0]])
+  (resolve-2-duplicates
+   [[:y 0 :z]
+    [1 1 1]
+    [0 1 0]]))
 
 (def r1c10
   [[1 1 0]
@@ -107,9 +130,10 @@
    [0 1 1]])
 
 (def r2c1
-  [[0 1 1]
-   [0 1 1]
-   [0 1 1]])
+  (resolve-2-duplicates
+   [[:y 1 1]
+    [0 1 1]
+    [:z 1 1]]))
 
 (def r2c2
   [[1 1 1]
@@ -117,9 +141,10 @@
    [1 1 1]])
 
 (def r2c3
-  [[1 1 0]
-   [1 1 0]
-   [1 1 0]])
+  (resolve-2-duplicates
+   [[1 1 :y]
+    [1 1 0]
+    [1 1 :z]]))
 
 (def r2c4
   (resolve-4-duplicates
@@ -128,9 +153,10 @@
     [:y 1 :z]]))
 
 (def r2c5
-  [[0 1 1]
-   [0 1 1]
-   [0 1 0]])
+  (resolve-2-duplicates
+   [[:y 1 1]
+    [0 1 1]
+    [:z 1 0]]))
 
 (def r2c6
   [[1 1 1]
@@ -143,9 +169,10 @@
    [0 1 1]])
 
 (def r2c8
-  [[1 1 0]
-   [1 1 0]
-   [0 1 0]])
+  (resolve-2-duplicates
+   [[1 1 :y]
+    [1 1 0]
+    [0 1 :z]]))
 
 (def r2c9
   [[1 1 1]
@@ -164,9 +191,10 @@
     [:y 0 :z]]))
 
 (def r3c2
-  [[1 1 1]
-   [1 1 1]
-   [0 0 0]])
+  (resolve-2-duplicates
+   [[1 1 1]
+    [1 1 1]
+    [:y 0 :z]]))
 
 (def r3c3
   (resolve-3-duplicates
@@ -181,9 +209,10 @@
     [:y 0 :z]]))
 
 (def r3c5
-  [[0 1 0]
-   [0 1 1]
-   [0 1 1]])
+  (resolve-2-duplicates
+   [[:y 1 0]
+    [0 1 1]
+    [:z 1 1]]))
 
 (def r3c6
   [[1 1 0]
@@ -196,9 +225,10 @@
    [1 1 1]])
 
 (def r3c8
-  [[0 1 0]
-   [1 1 0]
-   [1 1 0]])
+  (resolve-2-duplicates
+   [[0 1 :y]
+    [1 1 0]
+    [1 1 :z]]))
 
 (def r3c9
   [[0 1 0]
@@ -241,29 +271,34 @@
     [:y 0 :z]]))
 
 (def r4c5
-  [[0 1 0]
-   [0 1 1]
-   [0 0 0]])
+  (resolve-3-duplicates
+   [[:x 1 0]
+    [0 1 1]
+    [:y 0 :z]]))
 
 (def r4c6
-  [[1 1 0]
-   [1 1 1]
-   [0 0 0]])
+  (resolve-2-duplicates
+   [[1 1 0]
+    [1 1 1]
+    [:y 0 :z]]))
 
 (def r4c7
-  [[0 1 1]
-   [1 1 1]
-   [0 0 0]])
+  (resolve-2-duplicates
+   [[0 1 1]
+    [1 1 1]
+    [:y 0 :z]]))
 
 (def r4c8
-  [[0 1 0]
-   [1 1 0]
-   [0 0 0]])
+  (resolve-3-duplicates
+   [[0 1 :x]
+    [1 1 0]
+    [:y 0 :z]]))
 
 (def r4c9
-  [[0 1 0]
-   [1 1 1]
-   [0 0 0]])
+  (resolve-2-duplicates
+   [[0 1 0]
+    [1 1 1]
+    [:y 0 :z]]))
 
 (def r4c10
   [[0 1 1]
@@ -277,9 +312,10 @@
 
 
 (def r5c5
-  [[0 1 0]
-   [0 1 1]
-   [0 1 0]])
+  (resolve-2-duplicates
+   [[:y 1 0]
+    [0 1 1]
+    [:z 1 0]]))
 
 (def r5c6
   [[1 1 0]
@@ -292,9 +328,10 @@
    [0 1 1]])
 
 (def r5c8
-  [[0 1 0]
-   [1 1 0]
-   [0 1 0]])
+  (resolve-2-duplicates
+   [[0 1 :y]
+    [1 1 0]
+    [0 1 :z]]))
 
 (def r5c9
   [[0 1 0]
@@ -316,7 +353,6 @@
 
 (def tile-w 20)
 (def tile-h 20)
-
 
 (defn foo [bits-to-tile row-index column-index cell]
   (var bits (matrix-to-bits cell))
@@ -343,53 +379,64 @@
     bits-to-tile))
 
 (def example-room
-  [[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 1 1 0 0 1 1 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0]
-   [0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0]
-   [0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0]
-   [0 0 1 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0]
-   [0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 1 0 1 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0]
-   [0 0 0 0 0 1 1 1 1 0 0 0 0 0 1 1 1 0 0 0]
-   [0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 1 1 0 0 0]
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0]
-   [0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
-   [0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]])
+  [[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 1 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]
+   [0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
+   [0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0]
+   [0 0 1 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 1 0 1 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 1 1 1 1 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0]
+   [0 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 1 1 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 1 0 1 1]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]])
 
-(defn get-tile [col row]
-  (if (or (< col 0) (< row 0) (>= col 20) (>= row 20))
+(defn get-tile [room-bits col row]
+  (if (or (< col 0) (< row 0) (>= col 25) (>= row 25))
     0
-    ((example-room row) col)))
+    ((room-bits row) col)))
 
-(def example-room-tiles
-  (do
-    # ((pos rect) ...)
-    (var tiles @[])
-    (loop [row-index :keys example-room]
-      (var row (example-room row-index))
-      (loop [column-index :keys row]
-        (var tile (row column-index))
-        (var tile-neighbours @[])
-        (if (= tile 1)
-          (do
-            (for neighbour-row -1 2
-                 (for neighbour-col -1 2
-                      (var tile-value (get-tile
-                                       (+ column-index neighbour-col)
-                                       (+ row-index neighbour-row)))
-                      (array/push tile-neighbours
-                                  tile-value)))
-            (var tile-pos [(* column-index 20) (* row-index 20) tile-w tile-h])
-            (var tile-mask (array-to-bits tile-neighbours))
-            (if (nil? (tile-lookup tile-mask))
+(defn autotile [room-bits]
+  (var tiles @[])
+  (loop [row-index :keys room-bits]
+    (var row (room-bits row-index))
+    (loop [column-index :keys row]
+      (var tile (row column-index))
+      (if (= tile 1)
+        (do
+          (var tile-neighbours @[])
+          (for neighbour-row -1 2
+               (for neighbour-col -1 2
+                    (var tile-value (get-tile
+                                     room-bits
+                                     (+ column-index neighbour-col)
+                                     (+ row-index neighbour-row)))
+                    (array/push tile-neighbours
+                                tile-value)))
+          (var tile-pos [(* column-index 20) (* row-index 20) tile-w tile-h])
+          (var tile-mask (array-to-bits tile-neighbours))
+          (if (nil? (tile-lookup tile-mask))
+            (do
               (print ;tile-neighbours)
-              (array/push tiles [[(* 20 column-index) (* 20 row-index)] (tile-lookup tile-mask)]))))))
-    tiles))
+              (error "Could not match neighbours"))
+            (array/push
+             tiles
+             [[(* 20 column-index) (* 20 row-index)]
+              (tile-lookup tile-mask)]))))))
+  tiles)
+
+(def example-room-tiles (autotile example-room))

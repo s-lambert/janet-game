@@ -1,6 +1,7 @@
 (use jaylib)
 (use ./helpers)
 (use ./math)
+(use ./autotile)
 (use ./room)
 
 (init-window 500 500 "Test Game")
@@ -100,7 +101,7 @@
    (clear-background :white)
    (in-2d
     camera
-    (draw-room)
+    (draw-room example-room-tiles)
     (gui-grid [0 0 500 500] "GRID" 20 1 @[-1 -1])
     # (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
     (draw-circle (math/round (player-pos 0)) (math/round (player-pos 1)) 10 :black))
