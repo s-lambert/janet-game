@@ -1,4 +1,6 @@
-# Autotiling info
+(use ./prelude)
+
+# # Autotiling info
 # Each tile specifies the outer tiles needed like so:
 # xxx
 # xxx
@@ -344,6 +346,8 @@
 (defn array-to-bits [array]
   (scan-number (string ;array) 2))
 
+# 47 different tile possibilities but some tiles have multiple bitmasks
+# so there's 256 combinations where some tiles have multiple bitmasks.
 (def combinations
   [[r1c1 r1c2 r1c3 r1c4 r1c5 r1c6 r1c7 r1c8 r1c9 r1c10]
    [r2c1 r2c2 r2c3 r2c4 r2c5 r2c6 r2c7 r2c8 r2c9 r2c10]
@@ -351,8 +355,9 @@
    [r4c1 r4c2 r4c3 r4c4 r4c5 r4c6 r4c7 r4c8 r4c9 r4c10 r4c11]
    [r5c5 r5c6 r5c7 r5c8 r5c9]])
 
-(def tile-w 20)
-(def tile-h 20)
+(defn tilemap-coords [col row]
+  # Position                         Size
+  [(* col TILE-W) (* row TILE-H) TILE-W TILE-H])
 
 # Takes the matrix for the autotile definition and turns it into a bit lookup
 # and texture coords.
@@ -361,9 +366,9 @@
   (if (nil? (bits-to-tile bits))
     (if (= row-index 4)
       (put bits-to-tile bits
-           [(* (+ 4 column-index) 20) (* row-index 20) tile-w tile-h])
+           (tilemap-coords (+ 4 column-index) row-index))
       (put bits-to-tile bits
-           [(* column-index 20) (* row-index 20) tile-w tile-h]))
+           (tilemap-coords column-index row-index)))
     (error "Tile Collision")))
 
 # Takes the bitmask of tile + neighbours and gives back the texture coords.
@@ -403,7 +408,7 @@
                                      (+ row-index neighbour-row)))
                     (array/push tile-neighbours
                                 tile-value)))
-          (var tile-pos [(* column-index 20) (* row-index 20) tile-w tile-h])
+          (var tile-pos [(* column-index 20) (* row-index 20) TILE-W TILE-H])
           (var tile-mask (array-to-bits tile-neighbours))
           (if (nil? (tile-lookup tile-mask))
             (error (string "Could not match neighbours" tile-neighbours))
