@@ -24,7 +24,7 @@
 (defn load-menu-state []
   (set levels
        (string/join
-        (map (fn [s] (string/replace ".txt" "" s)) (os/dir "assets/levels"))
+        (map |(string/replace ".txt" "" $) (os/dir "assets/levels"))
         ";")))
 
 (defn create-new-level []
@@ -56,7 +56,9 @@
    (if (and (key-pressed? :s) (key-down? :left-control))
      (do
        (var tile-txt
-            (string/join (map (fn to-str [line] (string ;line)) tilemap-bits) "\n"))
+            (string/join
+             (map |(string ;$) tilemap-bits)
+             "\n"))
        (print tile-txt)))))
 
 (defn render-menu []
