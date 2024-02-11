@@ -66,6 +66,7 @@
 
 (def draw-room (tilemap-drawer))
 (def room-tiles (autotile (load-level "example")))
+(def room-b-tiles (autotile (load-level "hello-world")))
 
 (while (not (window-should-close))
   (def delta (get-frame-time))
@@ -104,8 +105,9 @@
   (draw
    (clear-background :white)
    (in-2d
-    camera 
-    (draw-room room-tiles)
+    camera
+    (draw-room room-a room-tiles)
+    (draw-room room-b room-b-tiles)
     # (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
     (draw-circle (math/round (player-pos 0)) (math/round (player-pos 1)) 10 :black))
 
