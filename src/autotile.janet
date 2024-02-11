@@ -91,7 +91,7 @@
 (def r1c4
   (resolve-4-duplicates
    [[:w 0 :x]
-    [0 1 0]
+    [0  1  0]
     [:y 1 :z]]))
 
 (def r1c5

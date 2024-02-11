@@ -21,33 +21,31 @@
 # Position in level dropdown that's selected
 (var selected-level (gui-integer -1))
 
+(var current-scene nil)
+
 (defn load-menu-state []
   (set levels 
        (string/join
         (map (fn [s] (string/replace ".txt" "" s)) (os/dir "assets/levels"))
         ";")))
 
-(defn render-menu []
-  (draw
-   (clear-background :white)
-   (if levels-dropdown-open
-     (gui-lock))
-
-   (gui-button [210 240 80 20] "NEW LEVEL")
-
-   (if (= (selected-level :value) -1)
-     (gui-disable))
-   (gui-button [210 280 80 20] "OPEN")
-   (if (= (selected-level :value) -1)
-     (gui-enable))
-
-   (if levels-dropdown-open
-     (gui-unlock))
-   (if (empty? levels)
-     (gui-disable))
-   (if (gui-dropdown-box [210 260 80 20] levels selected-level levels-dropdown-open)
-     (set levels-dropdown-open (not levels-dropdown-open)))
-   (gui-enable)))
+(defn load-level [id]
+  (def level-path (string "assets/levels/" id ".txt"))
+  (def level-file (file/open level-path :r))
+  (if (nil? level-file)
+    (do
+      (print id level-path)
+      (break)))
+  (def level @[])
+  (each line (file/lines level-file)
+    (var line-bits @[])
+    (each char (string/split " " line)
+      (var parsed (scan-number char 2))
+      (if (not (nil? parsed))
+        (array/push line-bits parsed))
+      )
+    (array/push level line-bits))
+  level)
 
 (defn render-tile-editor []
   (draw
@@ -73,8 +71,41 @@
             (string/join (map (fn to-str [line] (string ;line)) tilemap-bits) "\n"))
        (print tile-txt)))))
 
+(defn render-menu []
+  (draw
+   (clear-background :white)
+   (if levels-dropdown-open
+     (gui-lock))
+
+   (gui-button [210 240 80 20] "NEW LEVEL")
+
+   (if (= (selected-level :value) -1)
+     (gui-disable))
+   (if (gui-button [210 280 80 20] "OPEN")
+     (do
+       (var levels-list (string/split ";" levels))
+       (var level-index (selected-level :value))
+       (if (or (= level-index -1) (>= level-index (length levels-list)))
+         (do
+           (print "Failed to find level" ;levels-list level-index))
+         (do
+           (var selected-level-name (levels-list level-index))
+           (set tilemap-bits (load-level selected-level-name))
+           (set current-scene render-tile-editor)))))
+   (if (= (selected-level :value) -1)
+     (gui-enable))
+
+   (if levels-dropdown-open
+     (gui-unlock))
+   (if (empty? levels)
+     (gui-disable))
+   (if (gui-dropdown-box [210 260 80 20] levels selected-level levels-dropdown-open)
+     (set levels-dropdown-open (not levels-dropdown-open)))
+   (gui-enable)))
+
 (load-menu-state)
+(set current-scene render-menu)
 (while (not (window-should-close))
-  (render-menu))
+  (current-scene))
 
 (close-window)
