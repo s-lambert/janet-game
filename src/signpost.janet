@@ -8,15 +8,15 @@
   (set nine-patch (load-image-1 "assets/nine-patch-attempt.png"))
   (set nine-patch-t (load-texture-from-image nine-patch)))
 
-# [[texture position and size] up down left right nine|only-horziontall|only-vertical ]
-(def nine-patch-info [[0 0 20 20] 5 5 5 5 :npatch-nine-patch])
+# [[texture position and size] left up right down nine|only-horziontall|only-vertical ]
+(def nine-patch-info [[0 0 20 25] 5 5 5 10 :npatch-nine-patch])
 
 (defn draw-signpost [self]
   (draw-texture-n-patch
    nine-patch-t
    nine-patch-info
-   [;(self :position) 60 40]
-   [20 20]
+   [;(self :position) 60 45]
+   [0 5]
    0
    :white))
 
@@ -30,4 +30,3 @@
 
 (defn make-signpost [position text]
   (table/setproto @{:position position :text text} Signpost))
-# (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
