@@ -8,9 +8,7 @@
 
 (var grid-pos @[-1 -1])
 
-(var tilemap-bits @[])
-(for row-index 0 25
-     (array/push tilemap-bits (array/new-filled 25 0)))
+(var tilemap-bits nil)
 
 (load-tilemap)
 (def draw-room (tilemap-drawer))
@@ -28,6 +26,12 @@
        (string/join
         (map (fn [s] (string/replace ".txt" "" s)) (os/dir "assets/levels"))
         ";")))
+
+(defn create-new-level []
+  (var empty-level @[])
+  (for row-index 0 25
+       (array/push empty-level (array/new-filled 25 0)))
+  empty-level)
 
 (defn load-level [id]
   (def level-path (string "assets/levels/" id ".txt"))
@@ -77,7 +81,10 @@
    (if levels-dropdown-open
      (gui-lock))
 
-   (gui-button [210 240 80 20] "NEW LEVEL")
+   (if (gui-button [210 240 80 20] "NEW LEVEL")
+     (do
+       (set tilemap-bits (create-new-level))
+       (set current-scene render-tile-editor)))
 
    (if (= (selected-level :value) -1)
      (gui-disable))
