@@ -14,14 +14,6 @@
 
 (var camera (camera-2d :offset @[0 0] :target @[0 0] :rotation 0 :zoom 1.0))
 
-(defn leave-room-a? [position]
-  (<= (position 0) 10))
-
-(defn leave-room-b? [position]
-  (<= (position 1) 10))
-
-(defn leave-room-c? [& args] (do))
-
 (defn animation-fn [from to seconds lerp-val set-target]
   (var elapsed 0.0)
   (var just-finished false)
@@ -37,7 +29,6 @@
         (set-target (lerp-val from to progress))
         false))))
 
-(var should-transition? leave-room-a?)
 (var animation nil)
 (var other-animation nil)
 (var current-room "A")
@@ -58,6 +49,11 @@
 (def room-c (make-room [-500 -500] "blank"))
 (:add-exit room-a :west room-b)
 (:add-exit room-b :north room-c)
+
+(var should-transition? |(:leave-room? room-a :west $))
+(def leave-room-b? |(:leave-room? room-b :north $))
+
+(defn leave-room-c? [& args] (do))
 
 (def signpost-a (make-signpost [200 200] "HELLO WORLD!"))
 (def signpost-b (make-signpost [-300 200] "___________"))
