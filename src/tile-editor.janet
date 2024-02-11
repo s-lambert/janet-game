@@ -20,17 +20,23 @@
    (clear-background :white)
    (draw-room (autotile tilemap-bits))
    (gui-grid [0 0 500 500] "GRID" 20 1 grid-pos)
-   (if (and (mouse-button-down? :left)
-            (not (deep= grid-pos @[-1 -1])))
+
+   (var is-grid-hovered (not (deep= grid-pos @[-1 -1])))
+   (if (and (mouse-button-down? :left) is-grid-hovered)
      (let
       [[x y] grid-pos]
        (var row (tilemap-bits y))
        (set (row x) 1)))
-   (if (and (mouse-button-down? :right)
-            (not (deep= grid-pos @[-1 -1])))
+   (if (and (mouse-button-down? :right) is-grid-hovered)
      (let
       [[x y] grid-pos]
        (var row (tilemap-bits y))
-       (set (row x) 0)))))))
+       (set (row x) 0))) 
+   
+   (if (and (key-pressed? :s) (key-down? :left-control))
+     (do
+       (var tile-txt
+            (string/join (map (fn to-str [line] (string ;line)) tilemap-bits) "\n"))
+       (print tile-txt)))))
 
 (close-window)
