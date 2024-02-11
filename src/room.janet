@@ -1,4 +1,5 @@
 (use jaylib)
+(use ./prelude)
 (use ./autotile)
 
 (def bounds [0 500])
@@ -12,16 +13,6 @@
 (defn load-tilemap []
   (set tilemap (load-image-1 "assets/autotile-example.png"))
   (set tilemap-t (load-texture-from-image tilemap)))
-
-(defn zip-with [with-fn arr1 arr2]
-  (def to-index (min (length arr1) (length arr2)))
-  (def zipped @[])
-  (for i 0 to-index
-       (array/push zipped (with-fn (arr1 i) (arr2 i))))
-  zipped)
-
-(defn pos-add [pos-a pos-b]
-  (zip-with + pos-a pos-b))
 
 (defn tilemap-drawer []
   (fn draw-room [room-bounds tile-setup]

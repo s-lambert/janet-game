@@ -1,4 +1,5 @@
 (use jaylib)
+(use ./prelude)
 (use ./helpers)
 (use ./math)
 (use ./autotile)
@@ -67,6 +68,7 @@
 (def draw-room (tilemap-drawer))
 (def room-tiles (autotile (load-level "example")))
 (def room-b-tiles (autotile (load-level "hello-world")))
+(def grass-background (color 50 177 103))
 
 (while (not (window-should-close))
   (def delta (get-frame-time))
@@ -103,7 +105,7 @@
                  (= current-room "C") (do (set current-room nil) leave-room-c?)))))))
 
   (draw
-   (clear-background :white)
+   (clear-background grass-background)
    (in-2d
     camera
     (draw-room room-a room-tiles)
