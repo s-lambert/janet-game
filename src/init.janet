@@ -16,10 +16,6 @@
 
 (var camera (camera-2d :offset @[0 0] :target @[0 0] :rotation 0 :zoom 1.0))
 
-(def room-a-bounds [0 0])
-(def room-b-bounds [-500 0])
-(def room-c-bounds [-500 -500])
-
 (defn leave-room-a? [position]
   (<= (position 0) 10))
 
@@ -64,9 +60,12 @@
 (def nine-patch (load-image-1 "assets/nine-patch-attempt.png"))
 (def nine-patch-t (load-texture-from-image nine-patch))
 
-(def room-a (make-room room-a-bounds "example"))
-(def room-b (make-room room-b-bounds "hello-world"))
+(def room-a (make-room [0 0] "example"))
+(def room-b (make-room [-500 0] "hello-world"))
+(def room-c (make-room [-500 -500] "blank"))
 (:preload room-a)
+(:add-exit room-a :west room-b)
+(:add-exit room-b :north room-c)
 
 (def grass-background (color 50 177 103))
 
@@ -87,11 +86,11 @@
           (= current-room "A")
           (do
             (set other-animation (animation-fn (array/slice player-pos) [-10 (player-pos 1)] 0.5 lerp-pos update-player-pos))
-            (set animation (move-between-rooms room-a-bounds room-b-bounds)))
+            (set animation (move-between-rooms (room-a :bounds) (room-b :bounds))))
           (= current-room "B")
           (do
             (set other-animation (move-player-into-room (array/slice player-pos) [(player-pos 0) -10]))
-            (set animation (move-between-rooms room-b-bounds room-c-bounds))))))
+            (set animation (move-between-rooms (room-b :bounds) (room-c :bounds)))))))
     (do
       (if (not (nil? other-animation)) (other-animation delta))
       (if (animation delta)

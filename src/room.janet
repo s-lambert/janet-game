@@ -28,8 +28,15 @@
   @{:type "Room"
     :bounds [0 0]
     :tiles nil
-    :preload (fn [self] (load-tilemap))
-    :draw (fn [self] (draw-room (self :tiles) (self :bounds)))})
+    :exits @{}
+    :preload (fn [self] 
+               (load-tilemap))
+    :draw (fn [self] 
+            (draw-room (self :tiles) (self :bounds)))
+    :add-exit (fn [self direction room]
+                (if (nil? ((self :exits) direction))
+                  (set ((self :exits) direction) room)
+                  (error (string "Room already has exit in " direction))))})
 
 (defn make-room [bounds tiles-id] 
   (def tiles (autotile (load-level tiles-id)))
