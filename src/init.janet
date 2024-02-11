@@ -5,14 +5,11 @@
 (use ./autotile)
 (use ./room)
 (use ./loaders)
+(use ./player)
 
 (init-window 500 500 "Test Game")
 (set-target-fps 60)
 (hide-cursor)
-
-
-(def player-pos @[250.0 250.0])
-(def player-speed 200)
 
 (var camera (camera-2d :offset @[0 0] :target @[0 0] :rotation 0 :zoom 1.0))
 
@@ -44,9 +41,11 @@
 (var other-animation nil)
 (var current-room "A")
 
+(def player (setup-player))
+
 (defn update-player-pos [new-pos]
-  (set (player-pos 0) (new-pos 0))
-  (set (player-pos 1) (new-pos 1)))
+  (set ((player :position) 0) (new-pos 0))
+  (set ((player :position) 1) (new-pos 1)))
 
 (defn update-camera-target [new-target]
   (set (camera :target) @[;new-target]))
@@ -73,23 +72,16 @@
   (def delta (get-frame-time))
   (if (nil? animation)
     (do
-      (if (key-down? :down)
-        (set (player-pos 1) (+ (player-pos 1) (* delta player-speed))))
-      (if (key-down? :up)
-        (set (player-pos 1) (+ (player-pos 1) (- (* delta player-speed)))))
-      (if (key-down? :right)
-        (set (player-pos 0) (+ (player-pos 0) (* delta player-speed))))
-      (if (key-down? :left)
-        (set (player-pos 0) (+ (player-pos 0) (- (* delta player-speed)))))
-      (if (should-transition? player-pos)
+      (:handle-input player)
+      (if (should-transition? (player :position))
         (cond
           (= current-room "A")
           (do
-            (set other-animation (animation-fn (array/slice player-pos) [-10 (player-pos 1)] 0.5 lerp-pos update-player-pos))
+            (set other-animation (animation-fn (array/slice (player :position)) [-10 ((player :position) 1)] 0.5 lerp-pos update-player-pos))
             (set animation (move-between-rooms (room-a :bounds) (room-b :bounds))))
           (= current-room "B")
           (do
-            (set other-animation (move-player-into-room (array/slice player-pos) [(player-pos 0) -10]))
+            (set other-animation (move-player-into-room (array/slice (player :position)) [((player :position) 0) -10]))
             (set animation (move-between-rooms (room-b :bounds) (room-c :bounds)))))))
     (do
       (if (not (nil? other-animation)) (other-animation delta))
@@ -109,8 +101,7 @@
     camera
     (:draw room-a)
     (:draw room-b)
+    (:draw player)
     # (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
-    (draw-circle (math/round (player-pos 0)) (math/round (player-pos 1)) 10 :black))
-
-   (draw-text (string "ROOM " current-room) 0 0 10 :black)))
+    (draw-text (string "ROOM " current-room) 0 0 10 :black))))
 (close-window)
