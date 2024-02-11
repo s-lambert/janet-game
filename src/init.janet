@@ -6,6 +6,7 @@
 (use ./room)
 (use ./loaders)
 (use ./player)
+(use ./signpost)
 
 (init-window 500 500 "Test Game")
 (set-target-fps 60)
@@ -56,15 +57,18 @@
 (defn move-between-rooms [from-room to-room]
   (animation-fn from-room to-room 0.5 lerp-pos update-camera-target))
 
-(def nine-patch (load-image-1 "assets/nine-patch-attempt.png"))
-(def nine-patch-t (load-texture-from-image nine-patch))
-
 (def room-a (make-room [0 0] "example"))
 (def room-b (make-room [-500 0] "hello-world"))
 (def room-c (make-room [-500 -500] "blank"))
-(:preload room-a)
 (:add-exit room-a :west room-b)
 (:add-exit room-b :north room-c)
+
+(def signpost-a (make-signpost [200 200] "HELLO WORLD!"))
+(def signpost-b (make-signpost [-300 200] "___________"))
+
+# Loading
+(:preload room-a)
+(:preload signpost-a)
 
 (def grass-background (color 50 177 103))
 
@@ -101,7 +105,8 @@
     camera
     (:draw room-a)
     (:draw room-b)
+    (:draw signpost-a)
+    (:draw signpost-b)
     (:draw player)
-    # (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
     (draw-text (string "ROOM " current-room) 0 0 10 :black))))
 (close-window)
