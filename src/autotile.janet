@@ -354,7 +354,9 @@
 (def tile-w 20)
 (def tile-h 20)
 
-(defn foo [bits-to-tile row-index column-index cell]
+# Takes the matrix for the autotile definition and turns it into a bit lookup
+# and texture coords.
+(defn map-matrix-to-coords [bits-to-tile row-index column-index cell]
   (var bits (matrix-to-bits cell))
   (if (nil? (bits-to-tile bits))
     (if (= row-index 4)
@@ -374,8 +376,8 @@
         (var cell (row column-index))
         (if (= (cell 0) :has-duplicates)
           (each duplicate (drop 1 cell)
-            (foo bits-to-tile row-index column-index duplicate))
-          (foo bits-to-tile row-index column-index cell))))
+            (map-matrix-to-coords bits-to-tile row-index column-index duplicate))
+          (map-matrix-to-coords bits-to-tile row-index column-index cell))))
     bits-to-tile))
 
 (defn get-tile [room-bits col row]
@@ -392,6 +394,7 @@
       (if (= tile 1)
         (do
           (var tile-neighbours @[])
+          # Loop from -1 ..= 1 to get current cell and neighbours
           (for neighbour-row -1 2
                (for neighbour-col -1 2
                     (var tile-value (get-tile
