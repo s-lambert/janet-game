@@ -14,6 +14,3 @@
 # Colors need to be 0 < c <=1
 (defmacro color [hex-r hex-g hex-b]
   ~'[,(/ hex-r 255) ,(/ hex-g 255) ,(/ hex-b 255)])
-
-# Idea for a useful macro
-# (defmacro if-left [if-exp true-exp & false-exp])
