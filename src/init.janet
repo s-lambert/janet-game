@@ -44,15 +44,11 @@
 
 (def player (setup-player))
 
-(defn update-player-pos [new-pos]
-  (set ((player :position) 0) (new-pos 0))
-  (set ((player :position) 1) (new-pos 1)))
-
 (defn update-camera-target [new-target]
   (set (camera :target) @[;new-target]))
 
 (defn move-player-into-room [current-pos room-pos]
-  (animation-fn current-pos room-pos 0.5 lerp-pos update-player-pos))
+  (animation-fn current-pos room-pos 0.5 lerp-pos |(:move-player player $)))
 
 (defn move-between-rooms [from-room to-room]
   (animation-fn from-room to-room 0.5 lerp-pos update-camera-target))
@@ -81,7 +77,7 @@
         (cond
           (= current-room "A")
           (do
-            (set other-animation (animation-fn (array/slice (player :position)) [-10 ((player :position) 1)] 0.5 lerp-pos update-player-pos))
+            (set other-animation (animation-fn (array/slice (player :position)) [-10 ((player :position) 1)] 0.5 lerp-pos |(:move-player player $)))
             (set animation (move-between-rooms (room-a :bounds) (room-b :bounds))))
           (= current-room "B")
           (do

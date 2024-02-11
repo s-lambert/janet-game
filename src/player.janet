@@ -15,7 +15,9 @@
                         (set ((self :position) 0) (+ ((self :position) 0) (* delta PLAYER_SPEED))))
                       (if (key-down? :left)
                         (set ((self :position) 0) (+ ((self :position) 0) (- (* delta PLAYER_SPEED)))))))
-    :move-player (fn [self])
+    :move-player (fn [self new-pos]
+                   (set ((self :position) 0) (new-pos 0))
+                   (set ((self :position) 1) (new-pos 1)))
     :draw (fn [self]
             (draw-circle
              (math/round ((self :position) 0))
