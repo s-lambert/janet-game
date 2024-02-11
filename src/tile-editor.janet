@@ -12,7 +12,6 @@
 (var tilemap-bits nil)
 
 (load-tilemap)
-(def draw-room (tilemap-drawer))
 
 # Semi-colon separated list.
 (var levels @"")
@@ -23,7 +22,7 @@
 (var current-scene nil)
 
 (defn load-menu-state []
-  (set levels 
+  (set levels
        (string/join
         (map (fn [s] (string/replace ".txt" "" s)) (os/dir "assets/levels"))
         ";")))
@@ -34,10 +33,12 @@
        (array/push empty-level (array/new-filled 25 0)))
   empty-level)
 
+(def base-room-bounds [0 0])
+
 (defn render-tile-editor []
   (draw
    (clear-background :white)
-   (draw-room (autotile tilemap-bits))
+   (draw-room (autotile tilemap-bits) base-room-bounds)
    (gui-grid [0 0 500 500] "GRID" 20 1 grid-pos)
 
    (var is-grid-hovered (not (deep= grid-pos @[-1 -1])))

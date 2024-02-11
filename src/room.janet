@@ -11,25 +11,25 @@
 (var tilemap nil)
 (var tilemap-t nil)
 
-(defn load-tilemap [self]
+(defn load-tilemap []
   (set tilemap (load-image-1 "assets/autotile-example.png"))
   (set tilemap-t (load-texture-from-image tilemap)))
 
-(defn draw-room [self]
+(defn draw-room [tiles bounds]
   (if (nil? tilemap-t)
     (break))
-  (each tile (self :tiles)
+  (each tile tiles
     (if (nil? tile) (break))
     (let [[relative-position source] tile]
-      (def absolute-position (pos-add relative-position (self :bounds)))
+      (def absolute-position (pos-add relative-position bounds))
       (draw-texture-rec tilemap-t source absolute-position :white))))
 
 (def Room
   @{:type "Room"
     :bounds [0 0]
     :tiles nil
-    :preload load-tilemap
-    :draw draw-room})
+    :preload (fn [self] (load-tilemap))
+    :draw (fn [self] (draw-room (self :tiles) (self :bounds)))})
 
 (defn make-room [bounds tiles-id] 
   (def tiles (autotile (load-level tiles-id)))
