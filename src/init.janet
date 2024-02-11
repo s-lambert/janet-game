@@ -3,6 +3,7 @@
 (use ./math)
 (use ./autotile)
 (use ./room)
+(use ./loaders)
 
 (init-window 500 500 "Test Game")
 (set-target-fps 60)
@@ -64,6 +65,7 @@
 (load-tilemap)
 
 (def draw-room (tilemap-drawer))
+(def room-tiles (autotile (load-level "example")))
 
 (while (not (window-should-close))
   (def delta (get-frame-time))
@@ -102,8 +104,8 @@
   (draw
    (clear-background :white)
    (in-2d
-    camera
-    (draw-room example-room-tiles)
+    camera 
+    (draw-room room-tiles)
     # (draw-texture-n-patch nine-patch-t [[0 0 20 20] 5 5 5 5 :npatch-nine-patch] [200 200 60 40] [20 20] 0 :white)
     (draw-circle (math/round (player-pos 0)) (math/round (player-pos 1)) 10 :black))
 

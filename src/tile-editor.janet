@@ -2,6 +2,7 @@
 (use ./helpers)
 (use ./autotile)
 (use ./room)
+(use ./loaders)
 
 (init-window 500 500 "Tile Editor")
 (set-target-fps 60)
@@ -32,24 +33,6 @@
   (for row-index 0 25
        (array/push empty-level (array/new-filled 25 0)))
   empty-level)
-
-(defn load-level [id]
-  (def level-path (string "assets/levels/" id ".txt"))
-  (def level-file (file/open level-path :r))
-  (if (nil? level-file)
-    (do
-      (print id level-path)
-      (break)))
-  (def level @[])
-  (each line (file/lines level-file)
-    (var line-bits @[])
-    (each char (string/split " " line)
-      (var parsed (scan-number char 2))
-      (if (not (nil? parsed))
-        (array/push line-bits parsed))
-      )
-    (array/push level line-bits))
-  level)
 
 (defn render-tile-editor []
   (draw
