@@ -4,6 +4,8 @@
 (use ./autotile)
 
 (def bounds [0 500])
+# How far into the room the player should be
+(def MARGIN 10)
 
 (defmacro in-room-pos [x y]
   [(+ x (bounds 0)) (+ y (bounds 1))])
@@ -28,10 +30,10 @@
 (defn point-close-to? [bounds point]
   (def point-x (point 0))
   (def point-y (point 1))
-  (def min-x (- (bounds 0) 10))
-  (def max-x (+ min-x 520))
-  (def min-y (- (bounds 1) 10))
-  (def max-y (+ min-y 520))
+  (def min-x (- (bounds 0) MARGIN))
+  (def max-x (+ min-x 500 (* MARGIN 2)))
+  (def min-y (- (bounds 1) MARGIN))
+  (def max-y (+ min-y 500 (* MARGIN 2)))
   (and
    (and (>= point-x min-x) (<= point-x max-x))
    (and (>= point-y min-y) (<= point-y max-y))))
