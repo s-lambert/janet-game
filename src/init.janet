@@ -57,9 +57,13 @@
 (var current-state :within-room)
 
 (var current-room "A")
+
 # :moving-room variables
-(var animation nil)
-(var other-animation nil)
+(def animations @[])
+(defn all-animations-finished? [delta]
+  # and is a macro so can't be passed to reduce
+  # this just invokes all of the fns and if they're all true returns true
+  (reduce2 (fn [a b] (and a b)) (map |($ delta) animations)))
 
 # Loading
 (:preload room-a)
@@ -78,26 +82,23 @@
                (= current-room "A")
                (do
                  (set current-state :moving-rooms)
-                 (set other-animation (animation-fn (array/slice (player :position)) [-10 ((player :position) 1)] 0.5 lerp-pos |(:move-player player $)))
-                 (set animation (move-between-rooms (room-a :bounds) (room-b :bounds))))
+                 (array/push animations (animation-fn (array/slice (player :position)) [-10 ((player :position) 1)] 0.5 lerp-pos |(:move-player player $)))
+                 (array/push animations (move-between-rooms (room-a :bounds) (room-b :bounds))))
                (= current-room "B")
                (do
                  (set current-state :moving-rooms)
-                 (set other-animation (move-player-into-room (array/slice (player :position)) [((player :position) 0) -10]))
-                 (set animation (move-between-rooms (room-b :bounds) (room-c :bounds)))))))
+                 (array/push animations (move-player-into-room (array/slice (player :position)) [((player :position) 0) -10]))
+                 (array/push animations (move-between-rooms (room-b :bounds) (room-c :bounds)))))))
          (= current-state :moving-rooms)
-         (do
-           (if (not (nil? other-animation)) (other-animation delta))
-           (if (animation delta)
-             (do
-               (set current-state :within-room)
-               (set animation nil)
-               (set other-animation nil)
-               (set should-transition?
-                    (cond
-                      (= current-room "A") (do (set current-room "B") leave-room-b?)
-                      (= current-room "B") (do (set current-room "C") leave-room-c?)
-                      (= current-room "C") (do (set current-room nil) leave-room-c?)))))))
+         (if (all-animations-finished? delta)
+           (do
+             (set current-state :within-room)
+             (array/clear animations)
+             (set should-transition?
+                  (cond
+                    (= current-room "A") (do (set current-room "B") leave-room-b?)
+                    (= current-room "B") (do (set current-room "C") leave-room-c?)
+                    (= current-room "C") (do (set current-room nil) leave-room-c?))))))
 
   (draw
    (clear-background grass-background)
