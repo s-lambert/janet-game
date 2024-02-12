@@ -7,6 +7,7 @@
 (use ./loaders)
 (use ./player)
 (use ./signpost)
+(use ./breakout-room)
 
 (init-window 500 500 "Test Game")
 (set-target-fps 60)
@@ -42,13 +43,14 @@
 
 (def room-a (make-room :a [0 0] "example"))
 (def room-b (make-room :b [-500 0] "hello-world"))
-(def room-c (make-room :c [-500 -500] "blank"))
+(def room-c (make-breakout-room (make-room :c [-500 -500] "blank")))
 (def room-d (make-room :d [0 -500] "hello-world"))
 (:add-exit room-a :west room-b)
 (:add-exit room-b :north room-c)
 (:add-exit room-c :east room-d)
 (:add-exit room-a :north room-d)
 (:add-exit room-d :west room-c)
+(:add-exit room-c :south room-a)
 
 (def signpost-a (make-signpost [200 200] "HELLO WORLD!"))
 (def signpost-b (make-signpost [-300 200] "___________"))
@@ -82,6 +84,7 @@
                (set current-state :moving-rooms)
                (def target-room ((current-room :exits) move-to))
                (def new-pos (:where-will-player-enter target-room move-to (player :position)))
+               (pp new-pos)
                (array/push animations (move-player-into-room (array/slice (player :position)) new-pos))
                (array/push animations (move-between-rooms (current-room :bounds) (target-room :bounds)))
                (set previous-room current-room)
