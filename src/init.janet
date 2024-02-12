@@ -52,8 +52,8 @@
 (:add-exit room-d :west room-c)
 (:add-exit room-c :south room-a)
 
-(def signpost-a (make-signpost [200 200] "HELLO WORLD!"))
-(def signpost-b (make-signpost [-300 200] "___________"))
+(array/push (room-a :objects) (make-signpost [200 200] "HELLO WORLD!"))
+(array/push (room-b :objects) (make-signpost [-350 100] "___________"))
 
 (var current-state :within-room)
 
@@ -69,7 +69,6 @@
 
 # Loading
 (:preload room-a)
-(:preload signpost-a)
 
 (def grass-background (color 50 177 103))
 
@@ -103,9 +102,7 @@
     (:draw current-room)
     (if (not (nil? previous-room)) (:draw previous-room))
 
-    # Entities within a room should be Y-sorted.
-    (:draw signpost-a)
-    (:draw signpost-b)
+    # Entities within a room should be Y-sorted with the player but currently they're overlapping.
     (:draw player)
 
     (draw-text

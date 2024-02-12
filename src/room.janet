@@ -64,11 +64,16 @@
     :id nil
     :bounds [0 0]
     :tiles nil # table of tables
+    :objects nil # array of tables
     :exits nil # table
     :preload (fn [self]
-               (load-tilemap))
+               (load-tilemap)
+               (each object (self :objects)
+                 (:preload object)))
     :draw (fn [self]
-            (draw-room (self :tiles) (self :bounds)))
+            (draw-room (self :tiles) (self :bounds))
+            (each object (self :objects)
+              (:draw object)))
     :add-exit (fn [self direction room]
                 (if (nil? ((self :exits) direction))
                   (set ((self :exits) direction) room)
@@ -79,4 +84,9 @@
 
 (defn make-room [room-id bounds tiles-id]
   (def tiles (autotile (load-level tiles-id)))
-  (table/setproto @{:id room-id :bounds bounds :tiles tiles :exits @{}} Room))
+  (table/setproto
+   @{:id room-id
+     :bounds bounds
+     :tiles tiles
+     :objects @[]
+     :exits @{}} Room))
