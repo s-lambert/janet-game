@@ -74,6 +74,7 @@
 (while (not (window-should-close))
   (def delta (get-frame-time))
   # Update
+  (print (:will-player-exit current-room (player :position)))
   (cond  (= current-state :within-room)
          (do
            (:handle-input player)

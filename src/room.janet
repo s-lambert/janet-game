@@ -38,9 +38,11 @@
 
 (defn leave-room? [self direction player-pos]
   (def move-to ((self :exits) direction))
-  (if (not (nil? move-to))
-    (point-close-to? (move-to :bounds) player-pos)
-    (error (string/format "Room doesn't have %s" direction))))
+  (if (and (not (nil? move-to)) (point-close-to? (move-to :bounds) player-pos))
+    direction))
+
+(defn will-player-exit [self player-pos]
+  (not (nil? (some |(leave-room? self $ player-pos) [:north :east :south :west]))))
 
 (def Room
   @{:type "Room"
@@ -56,7 +58,8 @@
                 (if (nil? ((self :exits) direction))
                   (set ((self :exits) direction) room)
                   (error (string "Room already has exit in " direction))))
-    :leave-room? leave-room?})
+    :leave-room? leave-room?
+    :will-player-exit will-player-exit})
 
 (defn make-room [room-id bounds tiles-id]
   (def tiles (autotile (load-level tiles-id)))
