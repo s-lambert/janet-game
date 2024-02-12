@@ -9,6 +9,7 @@
 
 (var grid-pos @[-1 -1])
 
+(var selected-level-name "")
 (var tilemap-bits nil)
 
 (load-tilemap)
@@ -59,7 +60,13 @@
             (string/join
              (map |(string ;$) tilemap-bits)
              "\n"))
-       (print tile-txt)))))
+       (set tile-txt (string tile-txt "\n"))
+       (if (empty? selected-level-name)
+         (print tile-txt)
+         (do
+           (def level-file (file/open (level-path selected-level-name) :wn))
+           (file/write level-file tile-txt)
+           (file/close level-file)))))))
 
 (defn render-menu []
   (draw
@@ -82,7 +89,7 @@
          (do
            (print "Failed to find level" ;levels-list level-index))
          (do
-           (var selected-level-name (levels-list level-index))
+           (set selected-level-name (levels-list level-index))
            (set tilemap-bits (load-level selected-level-name))
            (set current-scene render-tile-editor)))))
    (if (= (selected-level :value) -1)

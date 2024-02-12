@@ -1,6 +1,9 @@
+(defn level-path [id]
+  (string "assets/levels/" id ".txt"))
+
 (defn load-level [id]
-  (def level-path (string "assets/levels/" id ".txt"))
-  (def level-file (file/open level-path :r))
+  (def this-level-path (level-path id))
+  (def level-file (file/open this-level-path :r))
   (if (nil? level-file)
     (do
       (print id level-path)
@@ -13,4 +16,5 @@
       (if (not (nil? parsed))
         (array/push line-bits parsed)))
     (array/push level line-bits))
+  (file/close level-file)
   level)
