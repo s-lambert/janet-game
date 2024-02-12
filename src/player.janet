@@ -7,14 +7,20 @@
   @{:position @[250.0 250.0]
     :handle-input (fn [self]
                     (let [delta (get-frame-time)]
+                      (var horizontal 0)
+                      (var vertical 0)
                       (if (key-down? :down)
-                        (set ((self :position) 1) (+ ((self :position) 1) (* delta PLAYER_SPEED))))
+                        (set vertical (+ vertical (* delta PLAYER_SPEED))))
                       (if (key-down? :up)
-                        (set ((self :position) 1) (+ ((self :position) 1) (- (* delta PLAYER_SPEED)))))
+                        (set vertical (- vertical  (* delta PLAYER_SPEED))))
                       (if (key-down? :right)
-                        (set ((self :position) 0) (+ ((self :position) 0) (* delta PLAYER_SPEED))))
+                        (set horizontal (+ horizontal (* delta PLAYER_SPEED))))
                       (if (key-down? :left)
-                        (set ((self :position) 0) (+ ((self :position) 0) (- (* delta PLAYER_SPEED)))))))
+                        (set horizontal (- horizontal  (* delta PLAYER_SPEED))))
+                      (if (not (= horizontal 0))
+                        (set ((self :position) 0) (+ ((self :position) 0) horizontal)))
+                      (if (not (= vertical 0))
+                        (set ((self :position) 1) (+ ((self :position) 1) vertical)))))
     :move-player (fn [self new-pos]
                    (set ((self :position) 0) (new-pos 0))
                    (set ((self :position) 1) (new-pos 1)))
