@@ -56,7 +56,7 @@
 
 (var current-state :within-room)
 
-(var current-room "A")
+(var current-room room-a)
 
 # :moving-room variables
 (def animations @[])
@@ -79,12 +79,12 @@
            (:handle-input player)
            (if (should-transition? (player :position))
              (cond
-               (= current-room "A")
+               (= (current-room :id) :a)
                (do
                  (set current-state :moving-rooms)
                  (array/push animations (animation-fn (array/slice (player :position)) [-10 ((player :position) 1)] 0.5 lerp-pos |(:move-player player $)))
                  (array/push animations (move-between-rooms (room-a :bounds) (room-b :bounds))))
-               (= current-room "B")
+               (= (current-room :id) :b)
                (do
                  (set current-state :moving-rooms)
                  (array/push animations (move-player-into-room (array/slice (player :position)) [((player :position) 0) -10]))
@@ -96,9 +96,10 @@
              (array/clear animations)
              (set should-transition?
                   (cond
-                    (= current-room "A") (do (set current-room "B") leave-room-b?)
-                    (= current-room "B") (do (set current-room "C") leave-room-c?)
-                    (= current-room "C") (do (set current-room nil) leave-room-c?))))))
+                    (= (current-room :id) :a) (do (set current-room room-b) leave-room-b?)
+                    (= (current-room :id) :b) (do (set current-room room-c) leave-room-c?)
+                    # This branch should never be hit, because C has no exits
+                    (= (current-room :id) :c) (do (set current-room nil) leave-room-c?))))))
 
   (draw
    (clear-background grass-background)
@@ -112,7 +113,11 @@
     (:draw signpost-b)
     (:draw player)
 
-    (draw-text (string "ROOM " current-room) 0 0 10 :black))
+    (draw-text
+     (string "ROOM " (string/ascii-upper (string (current-room :id))))
+     ;(current-room :bounds)
+     10
+     :black))
    # Draw UI
    ))
 (close-window)
