@@ -49,13 +49,15 @@
   (some |(leave-room? self $ player-pos) [:north :east :south :west]))
 
 (defn where-will-player-enter [self exiting-from player-pos]
+  # Make sure the player is a little over the edges so they don't immediately go back in 2-way rooms.
+  (def wiggle-room (+ MARGIN 2))
   # Assumption, the player's position is valid on the non-involved axis
   (cond
     # If they're exiting from the north, it means they're coming from the south, etc.
-    (= exiting-from :north) [(player-pos 0) (- (+ WIDTH ((self :bounds) 1)) MARGIN)]
-    (= exiting-from :east) [(+ ((self :bounds) 0) MARGIN) (player-pos 1)]
-    (= exiting-from :south) [(player-pos 0) (+ ((self :bounds) 1) MARGIN)]
-    (= exiting-from :west) [(- (+ WIDTH ((self :bounds) 0)) MARGIN) (player-pos 1)]))
+    (= exiting-from :north) [(player-pos 0) (- (+ WIDTH ((self :bounds) 1)) wiggle-room)]
+    (= exiting-from :east) [(+ ((self :bounds) 0) wiggle-room) (player-pos 1)]
+    (= exiting-from :south) [(player-pos 0) (+ ((self :bounds) 1) wiggle-room)]
+    (= exiting-from :west) [(- (+ WIDTH ((self :bounds) 0)) wiggle-room) (player-pos 1)]))
 
 (def Room
   @{:type "Room"
