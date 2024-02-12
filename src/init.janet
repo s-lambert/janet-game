@@ -43,13 +43,12 @@
 (def room-a (make-room :a [0 0] "example"))
 (def room-b (make-room :b [-500 0] "hello-world"))
 (def room-c (make-room :c [-500 -500] "blank"))
+(def room-d (make-room :d [0 -500] "hello-world"))
 (:add-exit room-a :west room-b)
 (:add-exit room-b :north room-c)
-
-(var should-transition? |(:leave-room? room-a :west $))
-(def leave-room-b? |(:leave-room? room-b :north $))
-
-(defn leave-room-c? [& args] (do))
+(:add-exit room-c :east room-d)
+(:add-exit room-a :north room-d)
+(:add-exit room-d :west room-c)
 
 (def signpost-a (make-signpost [200 200] "HELLO WORLD!"))
 (def signpost-b (make-signpost [-300 200] "___________"))
@@ -74,33 +73,22 @@
 (while (not (window-should-close))
   (def delta (get-frame-time))
   # Update
-  (print (:will-player-exit current-room (player :position)))
   (cond  (= current-state :within-room)
          (do
            (:handle-input player)
-           (if (should-transition? (player :position))
-             (cond
-               (= (current-room :id) :a)
-               (do
-                 (set current-state :moving-rooms)
-                 (array/push animations (animation-fn (array/slice (player :position)) [-10 ((player :position) 1)] 0.5 lerp-pos |(:move-player player $)))
-                 (array/push animations (move-between-rooms (room-a :bounds) (room-b :bounds))))
-               (= (current-room :id) :b)
-               (do
-                 (set current-state :moving-rooms)
-                 (array/push animations (move-player-into-room (array/slice (player :position)) [((player :position) 0) -10]))
-                 (array/push animations (move-between-rooms (room-b :bounds) (room-c :bounds)))))))
+           (if-let [move-to (:will-player-exit current-room (player :position))]
+             (do
+               (set current-state :moving-rooms)
+               (def target-room ((current-room :exits) move-to))
+               (def new-pos (:where-will-player-enter target-room move-to (player :position)))
+               (array/push animations (move-player-into-room (array/slice (player :position)) new-pos))
+               (array/push animations (move-between-rooms (current-room :bounds) (target-room :bounds)))
+               (set current-room target-room))))
          (= current-state :moving-rooms)
          (if (all-animations-finished? delta)
            (do
              (set current-state :within-room)
-             (array/clear animations)
-             (set should-transition?
-                  (cond
-                    (= (current-room :id) :a) (do (set current-room room-b) leave-room-b?)
-                    (= (current-room :id) :b) (do (set current-room room-c) leave-room-c?)
-                    # This branch should never be hit, because C has no exits
-                    (= (current-room :id) :c) (do (set current-room nil) leave-room-c?))))))
+             (array/clear animations))))
 
   (draw
    (clear-background grass-background)

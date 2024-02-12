@@ -46,7 +46,16 @@
     direction))
 
 (defn will-player-exit [self player-pos]
-  (not (nil? (some |(leave-room? self $ player-pos) [:north :east :south :west]))))
+  (some |(leave-room? self $ player-pos) [:north :east :south :west]))
+
+(defn where-will-player-enter [self exiting-from player-pos]
+  # Assumption, the player's position is valid on the non-involved axis
+  (cond
+    # If they're exiting from the north, it means they're coming from the south, etc.
+    (= exiting-from :north) [(player-pos 0) (- (+ WIDTH ((self :bounds) 1)) MARGIN)]
+    (= exiting-from :east) [(+ ((self :bounds) 0) MARGIN) (player-pos 1)]
+    (= exiting-from :south) [(player-pos 0) (+ ((self :bounds) 1) MARGIN)]
+    (= exiting-from :west) [(- (+ WIDTH ((self :bounds) 0)) MARGIN) (player-pos 1)]))
 
 (def Room
   @{:type "Room"
@@ -63,7 +72,8 @@
                   (set ((self :exits) direction) room)
                   (error (string "Room already has exit in " direction))))
     :leave-room? leave-room?
-    :will-player-exit will-player-exit})
+    :will-player-exit will-player-exit
+    :where-will-player-enter where-will-player-enter})
 
 (defn make-room [room-id bounds tiles-id]
   (def tiles (autotile (load-level tiles-id)))
