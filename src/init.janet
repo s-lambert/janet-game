@@ -56,6 +56,7 @@
 (var current-state :within-room)
 
 (var current-room room-a)
+(var previous-room nil)
 
 # :moving-room variables
 (def animations @[])
@@ -83,19 +84,21 @@
                (def new-pos (:where-will-player-enter target-room move-to (player :position)))
                (array/push animations (move-player-into-room (array/slice (player :position)) new-pos))
                (array/push animations (move-between-rooms (current-room :bounds) (target-room :bounds)))
+               (set previous-room current-room)
                (set current-room target-room))))
          (= current-state :moving-rooms)
          (if (all-animations-finished? delta)
            (do
              (set current-state :within-room)
+             (set previous-room nil)
              (array/clear animations))))
 
   (draw
    (clear-background grass-background)
    (in-2d
     camera
-    (:draw room-a)
-    (:draw room-b)
+    (:draw current-room)
+    (if (not (nil? previous-room)) (:draw previous-room))
 
     # Entities within a room should be Y-sorted.
     (:draw signpost-a)
