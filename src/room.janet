@@ -44,6 +44,7 @@
 
 (def Room
   @{:type "Room"
+    :id nil
     :bounds [0 0]
     :tiles nil # table of tables
     :exits nil # table
@@ -57,6 +58,6 @@
                   (error (string "Room already has exit in " direction))))
     :leave-room? leave-room?})
 
-(defn make-room [bounds tiles-id]
+(defn make-room [room-id bounds tiles-id]
   (def tiles (autotile (load-level tiles-id)))
-  (table/setproto @{:bounds bounds :tiles tiles :exits @{}} Room))
+  (table/setproto @{:id room-id :bounds bounds :tiles tiles :exits @{}} Room))
