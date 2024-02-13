@@ -20,10 +20,11 @@
           (set horizontal (+ horizontal (* delta PLAYER_SPEED))))
         (if (key-down? :left)
           (set horizontal (- horizontal  (* delta PLAYER_SPEED))))
+        (def pos (self :position))
         (if (not (= horizontal 0))
-          (set ((self :position) 0) (+ ((self :position) 0) horizontal)))
+          (set (pos 0) (+ (pos 0) horizontal)))
         (if (not (= vertical 0))
-          (set ((self :position) 1) (+ ((self :position) 1) vertical)))))
+          (set (pos 1) (+ (pos 1) vertical)))))
     :move-player (fn [self new-pos]
                    (set ((self :position) 0) (new-pos 0))
                    (set ((self :position) 1) (new-pos 1)))
