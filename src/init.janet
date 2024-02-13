@@ -58,6 +58,7 @@
 (var current-state :within-room)
 
 (var current-room room-a)
+(:when-player-enters current-room)
 (var previous-room nil)
 
 # :moving-room variables
@@ -87,7 +88,8 @@
                (array/push animations (move-player-into-room (array/slice (player :position)) new-pos))
                (array/push animations (move-between-rooms (current-room :bounds) (target-room :bounds)))
                (set previous-room current-room)
-               (set current-room target-room))))
+               (set current-room target-room)
+               (:when-player-enters current-room player))))
          (= current-state :moving-rooms)
          (if (all-animations-finished? delta)
            (do

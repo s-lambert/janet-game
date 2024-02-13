@@ -1,6 +1,8 @@
 (def TILE-W 20)
 (def TILE-H 20)
 
+(defn no-op [&] (do))
+
 (defn zip-with [with-fn arr1 arr2]
   (def to-index (min (length arr1) (length arr2)))
   (def zipped @[])

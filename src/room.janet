@@ -80,7 +80,8 @@
                   (error (string "Room already has exit in " direction))))
     :leave-room? leave-room?
     :will-player-exit will-player-exit
-    :where-will-player-enter where-will-player-enter})
+    :where-will-player-enter where-will-player-enter
+    :when-player-enters no-op})
 
 (defn make-room [room-id bounds tiles-id]
   (def tiles (autotile (load-level tiles-id)))
