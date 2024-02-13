@@ -3,9 +3,17 @@
 
 (def PLAYER_SPEED 200)
 
+(var spritesheet nil)
+(var spritesheet-t nil)
+
+(defn preload [&]
+  (set spritesheet (load-image-1 "assets/player.png"))
+  (set spritesheet-t (load-texture-from-image spritesheet)))
+
 (def Player
   @{:position @[250.0 250.0]
     :control-state :walking-around
+    :preload preload
     :handle-input
     (fn [self]
       # Debug commands
@@ -45,11 +53,7 @@
                    (set ((self :position) 0) (new-pos 0))
                    (set ((self :position) 1) (new-pos 1)))
     :draw (fn [self]
-            (draw-circle
-             (math/round ((self :position) 0))
-             (math/round ((self :position) 1))
-             10
-             :black))})
+            (draw-texture-pro spritesheet-t [0 0 20 20] [;(self :position) 20 20] [10 10] 0.0 :white))})
 
 (defn setup-player []
   (table/setproto @{} Player))

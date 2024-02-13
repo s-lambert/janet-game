@@ -69,6 +69,7 @@
   (reduce2 (fn [a b] (and a b)) (map |($ delta) animations)))
 
 # Loading
+(:preload player)
 (:preload room-a)
 
 (def grass-background (color 50 177 103))
