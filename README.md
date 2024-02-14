@@ -2,6 +2,14 @@
 
 - Allow travelling back to other rooms.
 - Implement YSorting drawable objects
+- Move around preload, putting it on each object sucks when there's multiple
+- Create a scene abstraction at the top level for communicating between states isnteadm of hardcoding
+
+# UNBLOCKERS
+
+- Tile editor saves without spaces and has an extra newline at the end.
+- Look at usage of var, probably not needed in a lot of cases.
+- Rooms probably should just be bi-directional and then have special cases for boss-like rooms.
 
 Decision Log:
 
@@ -10,6 +18,17 @@ Decision Log:
   - 20x20 tiles is 25x25 positions, which seems a bit excessive
 
 ## Janet Wiki
+
+# Case statement (a.k.a match)
+
+```clj
+(defn quadrant [[x y]]
+  (case [(neg? x) (neg? y)]
+    [false false] 3
+    [true false] 2
+    [true true] 1
+    [false true] 0))
+```
 
 # File loading
 
