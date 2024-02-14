@@ -53,7 +53,7 @@
                    (set ((self :position) 0) (new-pos 0))
                    (set ((self :position) 1) (new-pos 1)))
     :draw (fn [self]
-            (draw-texture-pro spritesheet-t [0 0 20 20] [;(self :position) 20 20] [10 10] 0.0 :white))})
+            (draw-texture-pro spritesheet-t [0 0 20 20] [;(self :position) 40 40] [20 20] 0.0 :white))})
 
 (defn setup-player []
   (table/setproto @{} Player))
