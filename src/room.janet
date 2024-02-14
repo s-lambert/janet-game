@@ -50,9 +50,8 @@
   (def player-pos ((self :player) :position))
   (some |(leave-room? self $) [:north :east :south :west]))
 
-(defn where-will-player-enter [self exiting-from]
-  (pp exiting-from)
-  (def player-pos ((self :player) :position))
+(defn where-will-player-enter [self current-room exiting-from]
+  (def player-pos ((current-room :player) :position))
   # Make sure the player is a little over the edges so they don't immediately go back in 2-way rooms.
   (def wiggle-room (+ MARGIN 2))
   # Assumption, the player's position is valid on the non-involved axis
@@ -76,6 +75,10 @@
       (load-tilemap)
       (each object (self :objects)
         (:preload object)))
+    :update
+    (fn [self]
+      (do #nothing, later do collision checks / update sub entities
+        ))
     :draw
     (fn [self]
       (draw-room (self :tiles) (self :bounds))

@@ -43,14 +43,9 @@
 
 (def room-a (make-room :a [0 0] "example"))
 (def room-b (make-room :b [-500 0] "hello-world"))
-(def room-c (make-breakout-room (make-room :c [-500 -500] "blank")))
+(def room-c (make-breakout-room (make-room :c [0 -500] "blank")))
 (def room-d (make-room :d [0 -500] "hello-world"))
-(:add-exit room-a :west room-b)
-(:add-exit room-b :north room-c)
-(:add-exit room-c :east room-d)
-(:add-exit room-a :north room-d)
-(:add-exit room-d :west room-c)
-(:add-exit room-c :south room-a)
+(:add-exit room-a :north room-c)
 
 (array/push (room-a :objects) (make-signpost [200 200] "HELLO WORLD!"))
 (array/push (room-b :objects) (make-signpost [-350 100] "___________"))
@@ -80,12 +75,12 @@
   (cond  (= current-state :within-room)
          (do
            (:handle-input player)
-           (if-let [move-to (:will-player-exit current-room)]
+           (:update current-room)
+           (if-let [move-direction (:will-player-exit current-room)]
              (do
                (set current-state :moving-rooms)
-               (def target-room ((current-room :exits) move-to))
-               (set (target-room :player) player)
-               (def new-pos (:where-will-player-enter target-room move-to))
+               (def target-room ((current-room :exits) move-direction))
+               (def new-pos (:where-will-player-enter target-room current-room move-direction))
                (array/push animations (move-player-into-room (array/slice (player :position)) new-pos))
                (array/push animations (move-between-rooms (current-room :bounds) (target-room :bounds)))
                (set previous-room current-room)
@@ -96,6 +91,7 @@
            (do
              (set current-state :within-room)
              (set previous-room nil)
+             (set (current-room :player) player)
              (array/clear animations))))
 
   (draw
