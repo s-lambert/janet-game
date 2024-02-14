@@ -10,6 +10,15 @@
   (set spritesheet (load-image-1 "assets/player.png"))
   (set spritesheet-t (load-texture-from-image spritesheet)))
 
+(def sprite-directions
+  {:up    [20 0 20 20]
+   :down  [60 0 20 20]
+   :left  [0 0 20 20]
+   :right [40 0 20 20]})
+
+(pp sprite-directions)
+(var current-dir :up)
+
 (def Player
   @{:position @[250.0 250.0]
     :control-state :walking-around
@@ -26,14 +35,18 @@
           (do
             (var horizontal 0)
             (var vertical 0)
-            (if (key-down? :down)
-              (set vertical (+ vertical (* delta PLAYER_SPEED))))
-            (if (key-down? :up)
-              (set vertical (- vertical  (* delta PLAYER_SPEED))))
             (if (key-down? :right)
-              (set horizontal (+ horizontal (* delta PLAYER_SPEED))))
+              (do (set horizontal (+ horizontal (* delta PLAYER_SPEED)))
+                  (set current-dir :right)))
             (if (key-down? :left)
-              (set horizontal (- horizontal  (* delta PLAYER_SPEED))))
+              (do (set horizontal (- horizontal  (* delta PLAYER_SPEED)))
+                  (set current-dir :left)))
+            (if (key-down? :down)
+              (do (set vertical (+ vertical (* delta PLAYER_SPEED)))
+                  (set current-dir :down)))
+            (if (key-down? :up)
+              (do (set vertical (- vertical  (* delta PLAYER_SPEED)))
+                  (set current-dir :up)))
             (def pos (self :position))
             (if (not (= horizontal 0))
               (set (pos 0) (+ (pos 0) horizontal)))
@@ -49,11 +62,17 @@
             (def pos (self :position))
             (if (not (= horizontal 0))
               (set (pos 0) (+ (pos 0) horizontal)))))))
-    :move-player (fn [self new-pos]
-                   (set ((self :position) 0) (new-pos 0))
-                   (set ((self :position) 1) (new-pos 1)))
-    :draw (fn [self]
-            (draw-texture-pro spritesheet-t [0 0 20 20] [;(self :position) 40 40] [20 20] 0.0 :white))})
+    :move-player
+    (fn [self new-pos]
+      (set ((self :position) 0) (new-pos 0))
+      (set ((self :position) 1) (new-pos 1)))
+    :draw
+    (fn [self]
+      (draw-texture-pro
+       spritesheet-t
+       (sprite-directions current-dir)
+       [;(self :position) 40 40]
+       [20 20] 0.0 :white))})
 
 (defn setup-player []
   (table/setproto @{} Player))
