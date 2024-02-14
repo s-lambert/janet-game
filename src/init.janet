@@ -58,7 +58,7 @@
 (var current-state :within-room)
 
 (var current-room room-a)
-(:when-player-enters current-room)
+(set (current-room :player) player)
 (var previous-room nil)
 
 # :moving-room variables
@@ -80,12 +80,12 @@
   (cond  (= current-state :within-room)
          (do
            (:handle-input player)
-           (if-let [move-to (:will-player-exit current-room (player :position))]
+           (if-let [move-to (:will-player-exit current-room)]
              (do
                (set current-state :moving-rooms)
                (def target-room ((current-room :exits) move-to))
-               (def new-pos (:where-will-player-enter target-room move-to (player :position)))
-               (pp new-pos)
+               (set (target-room :player) player)
+               (def new-pos (:where-will-player-enter target-room move-to))
                (array/push animations (move-player-into-room (array/slice (player :position)) new-pos))
                (array/push animations (move-between-rooms (current-room :bounds) (target-room :bounds)))
                (set previous-room current-room)

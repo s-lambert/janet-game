@@ -40,15 +40,19 @@
    (and (>= point-x min-x) (<= point-x max-x))
    (and (>= point-y min-y) (<= point-y max-y))))
 
-(defn leave-room? [self direction player-pos]
+(defn leave-room? [self direction]
+  (def player-pos ((self :player) :position))
   (def move-to ((self :exits) direction))
   (if (and (not (nil? move-to)) (point-close-to? (move-to :bounds) player-pos))
     direction))
 
-(defn will-player-exit [self player-pos]
-  (some |(leave-room? self $ player-pos) [:north :east :south :west]))
+(defn will-player-exit [self]
+  (def player-pos ((self :player) :position))
+  (some |(leave-room? self $) [:north :east :south :west]))
 
-(defn where-will-player-enter [self exiting-from player-pos]
+(defn where-will-player-enter [self exiting-from]
+  (pp exiting-from)
+  (def player-pos ((self :player) :position))
   # Make sure the player is a little over the edges so they don't immediately go back in 2-way rooms.
   (def wiggle-room (+ MARGIN 2))
   # Assumption, the player's position is valid on the non-involved axis
@@ -65,20 +69,23 @@
     :bounds [0 0]
     :tiles nil # table of tables
     :objects nil # array of tables
+    :player nil
     :exits nil # table
-    :preload (fn [self]
-               (load-tilemap)
-               (each object (self :objects)
-                 (:preload object)))
-    :draw (fn [self]
-            (draw-room (self :tiles) (self :bounds))
-            (each object (self :objects)
-              (:draw object)))
-    :add-exit (fn [self direction room]
-                (if (nil? ((self :exits) direction))
-                  (set ((self :exits) direction) room)
-                  (error (string "Room already has exit in " direction))))
-    :leave-room? leave-room?
+    :preload
+    (fn [self]
+      (load-tilemap)
+      (each object (self :objects)
+        (:preload object)))
+    :draw
+    (fn [self]
+      (draw-room (self :tiles) (self :bounds))
+      (each object (self :objects)
+        (:draw object)))
+    :add-exit
+    (fn [self direction room]
+      (if (nil? ((self :exits) direction))
+        (set ((self :exits) direction) room)
+        (error (string "Room already has exit in " direction))))
     :will-player-exit will-player-exit
     :where-will-player-enter where-will-player-enter
     :when-player-enters no-op})
