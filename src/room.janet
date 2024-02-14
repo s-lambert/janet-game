@@ -74,7 +74,7 @@
     (fn [self]
       (load-tilemap)
       (each object (self :objects)
-        (:preload object)))
+        (if (not (nil? (object :preload))) (:preload object))))
     :update
     (fn [self]
       (do #nothing, later do collision checks / update sub entities

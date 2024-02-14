@@ -1,9 +1,25 @@
 (use ../prelude)
 (use ../room)
+(use ./block)
 
 (defn make-breakout-room [existing-room]
+  (def x (+ (* MARGIN 2) ((existing-room :bounds) 0)))
+  (def y (+ (* MARGIN 8) ((existing-room :bounds) 1)))
+  (def blocks @[])
+  (for row 0 6
+       (for col 0 23
+            (def block-type (cond
+                              (< row 2) :red
+                              (< row 4) :orange
+                              :yellow))
+            (array/push blocks (make-block block-type [(+ x (* col 20)) (+ y (* row 20))]))))
+  (set (existing-room :objects) blocks)
+
   (table/setproto
-   @{:update
+   @{:preload
+     (fn [self]
+       (:preload (table/getproto self)))
+     :update
      (fn [self]
        ((table/getproto self) :update)
        (def player-x (((self :player) :position) 0))

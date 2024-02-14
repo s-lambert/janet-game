@@ -8,6 +8,7 @@
 (use ./player)
 (use ./signpost)
 (use ./breakout/breakout-room)
+(use ./breakout/block)
 
 (init-window 500 500 "Test Game")
 (set-target-fps 60)
@@ -66,6 +67,8 @@
 # Loading
 (:preload player)
 (:preload room-a)
+(:preload room-c)
+(:preload2 Block)
 
 (def grass-background (color 50 177 103))
 
