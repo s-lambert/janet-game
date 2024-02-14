@@ -1,5 +1,5 @@
-(use ./prelude)
-(use ./room)
+(use ../prelude)
+(use ../room)
 
 (defn make-breakout-room [existing-room]
   (table/setproto

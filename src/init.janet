@@ -7,7 +7,7 @@
 (use ./loaders)
 (use ./player)
 (use ./signpost)
-(use ./breakout-room)
+(use ./breakout/breakout-room)
 
 (init-window 500 500 "Test Game")
 (set-target-fps 60)
